@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>เกมอ่านสีตัวต้านทาน</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#eef2f4;--grid:#dde5ea;--card:#fff;--ink:#14213d;--mut:#586579;--acc:#0f766e;--on:#fff;--bad:#c0392b;--ok:#1e8449;--line:#c9d3db;color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1621;--grid:#182536;--card:#16212f;--ink:#e8eef5;--mut:#93a1b5;--acc:#2dd4bf;--on:#04201d;--bad:#ff7b6b;--ok:#4ade80;--line:#2a3a4e;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1621;--grid:#182536;--card:#16212f;--ink:#e8eef5;--mut:#93a1b5;--acc:#2dd4bf;--on:#04201d;--bad:#ff7b6b;--ok:#4ade80;--line:#2a3a4e;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:"IBM Plex Sans Thai",system-ui,sans-serif;background-color:var(--bg);
+background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px}
+main{max-width:760px;margin:0 auto;padding:18px 14px 40px}
+h1{font-size:1.7rem;font-weight:700;margin:6px 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.wrap{display:grid;gap:14px}
+.wrap.chart{grid-template-columns:1fr 250px;align-items:start}
+@media (max-width:700px){.wrap.chart{grid-template-columns:1fr}}
+.wrap .card{margin:0}
+ul{padding-left:1.2rem;line-height:1.7;margin:0 0 14px}
+button{font:inherit;font-weight:600;cursor:pointer;border-radius:10px;border:1px solid var(--acc);padding:10px 18px;background:var(--acc);color:var(--on)}
+button.ghost{background:transparent;color:var(--acc);padding:6px 12px}
+button.hard{background:var(--bad);border-color:var(--bad);color:var(--on)}
+.modes{display:flex;gap:12px;flex-wrap:wrap}
+.modes button{flex:1 1 140px;font-size:1.5rem;padding:44px 12px;border-radius:14px}
+button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;font-weight:600}
+.tbar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+#tf{height:100%;background:var(--acc);width:100%}
+#tf.low{background:var(--bad)}
+#tt{text-align:right;font-size:.9rem;color:var(--mut);margin:4px 0 8px}
+svg{display:block;width:100%;max-width:420px;margin:0 auto}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0 16px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 12px 4px 6px;font-weight:600}
+.chip i{width:16px;height:16px;border-radius:50%;border:1px solid rgba(0,0,0,.35)}
+form{display:flex;gap:8px}
+input{flex:1;min-width:0;font:inherit;font-size:1.5rem;font-weight:600;text-align:center;padding:8px;border:2px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+#msg{min-height:1.4em;margin:8px 0 0;color:var(--bad);font-size:.9rem}
+.hint{color:var(--mut);font-size:.85rem;margin:4px 0 0}
+table{width:100%;border-collapse:collapse;font-size:.8rem;text-align:center}
+th{font-weight:600;color:var(--mut);padding:2px 2px 6px}
+td{padding:2px}
+.sw{display:block;border-radius:5px;padding:2px 4px;font-weight:600;border:1px solid rgba(0,0,0,.25)}
+.big{font-size:4rem;font-weight:700;line-height:1;margin:6px 0}
+.bad{color:var(--bad)}.ok{color:var(--ok)}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<h1>เกมอ่านสีตัวต้านทาน</h1>
+
+<section id="start" class="card">
+
+
+
+
+
+
+
+
+<div class="modes"><button id="go">โหมดปกติ</button><button id="gohard" class="hard">โหมดยาก</button></div>
+<p class="hint" id="b0"></p>
+</section>
+
+<div id="play" class="wrap chart" hidden>
+<section class="card">
+<div class="top"><span id="qn"></span><span id="sc"></span><span><button class="ghost" id="rs" type="button">เริ่มใหม่</button> <button class="ghost" id="home" type="button">หน้าหลัก</button></span></div>
+<div class="tbar"><div id="tf"></div></div>
+<div id="tt"></div>
+<div id="res"></div>
+<div id="chips" class="chips"></div>
+<form id="f" autocomplete="off">
+<input id="ans" type="text" inputmode="decimal" enterkeyhint="done" placeholder="ค่าโอห์ม" aria-label="คำตอบเป็นโอห์ม">
+<button type="submit">ตอบ</button>
+</form>
+<p id="msg" role="alert"></p>
+</section>
+<aside id="chart" class="card"><table id="ct"></table></aside>
+</div>
+
+<section id="end" class="card" hidden style="text-align:center">
+<div id="et" style="font-size:1.4rem;font-weight:700"></div>
+<div class="big"><span id="es"></span><span style="font-size:1.4rem;color:var(--mut)"> / 100 ข้อ</span></div>
+<p id="ed" style="margin:6px 0"></p>
+<div id="eres"></div>
+<p class="hint" id="eb"></p>
+<button id="again" style="margin-top:12px">เริ่มใหม่</button> <button class="ghost" id="menu" style="margin-top:12px">เปลี่ยนโหมด</button>
+</section>
+</main>
+
+<script>
+var N=['black','brown','red','orange','yellow','green','blue','violet','grey','white','gold','silver'];
+var HEX=['#151515','#7a3e1a','#d62828','#f77f00','#f4d400','#2a9d3f','#2457d6','#7b3fb8','#8d8d8d','#f4f4f4','#d4af37','#b9bcc2'];
+var LIGHT=[0,0,0,1,1,0,0,0,1,1,1,1];
+var TOL={1:'1%',2:'2%',10:'5%',11:'10%'};
+var BODY='M62 55C62 26 84 22 104 32L256 32C276 22 298 26 298 55C298 84 276 88 256 78L104 78C84 88 62 84 62 55Z';
+
+// fixed pool of 150 patterns (75 four-band, 75 five-band)
+function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+var pool=[],seen={},r=rng(2026);
+function pick(n){return Math.floor(r()*n)}
+while(pool.length<150){
+  var five=pool.length%2===1,d=[pick(9)+1],i;
+  for(i=1;i<(five?3:2);i++)d.push(pick(10));
+  var m=r()<0.1?10+pick(2):pick(five?6:7);
+  var t=five?[1,2,10,11][pick(4)]:[10,11][pick(2)];
+  var key=d.join('')+'-'+m+'-'+t;if(seen[key])continue;seen[key]=1;
+  var e=m===10?-1:m===11?-2:m;
+  pool.push({b:d.concat([m,t]),v:Math.round(+d.join('')*Math.pow(10,e)*1000)/1000});
+}
+
+var $=function(x){return document.getElementById(x)};
+var run=[],qi=0,score=0,deadline=0,total=120,timer=null,over=true,hard=false,bests={n:0,h:0};
+try{bests.n=+localStorage.getItem('resistor_best')||0;bests.h=+localStorage.getItem('resistor_best_hard')||0}catch(e){}
+
+function mult(i){return i===0?'×1':i<10?'×10<sup>'+i+'</sup>':i===10?'×0.1':'×0.01'}
+var h='<tr><th>สี</th><th>เลข</th><th>ตัวคูณ</th><th>คลาด</th></tr>';
+for(var k=0;k<12;k++)h+='<tr><td><span class="sw" style="background:'+HEX[k]+';color:'+(LIGHT[k]?'#14213d':'#fff')+'">'+N[k]+'</span></td><td>'+(k<10?k:'–')+'</td><td>'+mult(k)+'</td><td>'+(TOL[k]||'–')+'</td></tr>';
+$('ct').innerHTML=h;
+
+function draw(b){
+  var xs=b.length===5?[108,134,160,186,262]:[112,142,172,262],s='';
+  b.forEach(function(c,i){s+='<rect x="'+xs[i]+'" y="26" width="15" height="58" fill="'+HEX[c]+'" stroke="rgba(0,0,0,.3)" stroke-width=".6"/>'});
+  return '<svg viewBox="0 0 360 110" role="img" aria-label="ตัวต้านทาน"><defs><clipPath id="cp"><path d="'+BODY+'"/></clipPath></defs><rect x="0" y="52" width="360" height="6" fill="#9aa3ad"/><path d="'+BODY+'" fill="#e3c595"/><g clip-path="url(#cp)">'+s+'<rect x="60" y="30" width="240" height="12" fill="#fff" opacity=".2"/></g></svg>'
+  +'<div class="chips">'+b.map(function(c){return '<span class="chip"><i style="background:'+HEX[c]+'"></i>'+N[c]+'</span>'}).join('')+'</div>';
+}
+function fmt(v){return v.toLocaleString('en-US',{maximumFractionDigits:3})}
+function view(id){['start','play','end'].forEach(function(x){$(x).hidden=x!==id})}
+
+function ask(){
+  var q=run[qi];
+  $('res').innerHTML=draw(q.b);$('chips').hidden=true;
+  $('qn').textContent=(hard?'โหมดยาก ':'')+'ข้อ '+(qi+1)+' / 100';$('sc').textContent='คะแนน '+score;
+  var sh=!hard&&qi<20;$('chart').hidden=!sh;$('play').className='wrap'+(sh?' chart':'');
+  $('msg').textContent='';$('ans').value='';$('ans').focus();
+  total=hard?90:(qi+1>=70?60:120);deadline=Date.now()+total*1000;tick();
+}
+function tick(){
+  var left=Math.max(0,deadline-Date.now()),s=Math.ceil(left/1000);
+  $('tf').style.width=(left/total/10)+'%';$('tf').className=left<15000?'low':'';
+  $('tt').textContent='เหลือ '+Math.floor(s/60)+':'+('0'+s%60).slice(-2);
+  if(left<=0)finish('time');
+}
+function start(hm){if(typeof hm==='boolean')hard=hm;
+  var idx=pool.map(function(_,i){return i}),j,t;
+  for(j=idx.length-1;j>0;j--){var x=Math.floor(Math.random()*(j+1));t=idx[j];idx[j]=idx[x];idx[x]=t}
+  run=idx.slice(0,100).map(function(i){return pool[i]});
+  qi=0;score=0;over=false;clearInterval(timer);timer=setInterval(tick,200);
+  view('play');ask();
+}
+function finish(why){
+  if(over)return;over=true;clearInterval(timer);
+  var k2=hard?'h':'n';if(score>bests[k2]){bests[k2]=score;try{localStorage.setItem(hard?'resistor_best_hard':'resistor_best',score)}catch(e){}}
+  $('et').textContent=why==='win'?'ผ่านครบ 100 ข้อ!':why==='time'?'หมดเวลา':'ตอบผิด';
+  $('et').className=why==='win'?'ok':'bad';
+  $('es').textContent=score;
+  if(why==='win'){$('ed').textContent='';$('eres').innerHTML=''}
+  else{$('ed').textContent='ข้อ '+(qi+1)+' คำตอบที่ถูกคือ '+fmt(run[qi].v)+' Ω';$('eres').innerHTML=draw(run[qi].b)}
+  $('eb').textContent=(hard?'โหมดยาก ':'โหมดปกติ ')+'คะแนนสูงสุดของคุณ '+bests[k2]+' ข้อ';
+  view('end');
+}
+$('f').addEventListener('submit',function(ev){
+  ev.preventDefault();if(over)return;
+  var s=$('ans').value.replace(/[,\s]/g,'');
+  if(!/^\d+(\.\d+)?$/.test(s)){$('msg').textContent='พิมพ์เป็นตัวเลขเท่านั้น';return}
+  if(Math.abs(+s-run[qi].v)<0.0005){score++;qi++;if(qi===100)finish('win');else ask()}
+  else finish('wrong');
+});
+$('go').onclick=function(){start(false)};$('gohard').onclick=function(){start(true)};$('again').onclick=function(){start()};$('rs').onclick=function(){start()};
+function sb(){$('b0').textContent=(bests.n||bests.h)?'คะแนนสูงสุด โหมดปกติ '+bests.n+' ข้อ โหมดยาก '+bests.h+' ข้อ':''}sb();$('menu').onclick=function(){sb();view('start')};$('home').onclick=function(){over=true;clearInterval(timer);sb();view('start')};
+</script>
+</body>
+</html>
